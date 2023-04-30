@@ -44,7 +44,7 @@ Lastly, the algorithm counts and displays the new number of successfully execute
 
 ## Remarks:
 
-- Arguments for the Echo command written inside quote marks will be treated as a single argument and printed in the exactly the same way. This also means any character written inside quote marks as a part of the echo command will NOT be treated as a special character and will be printed to the screen. 
+- Arguments for the Echo command written inside quote marks will be treated as a single argument and printed in the exactly same way. This also means any character written inside quote marks as a part of the echo command will NOT be treated as a special character and will be printed to the screen. 
 - Users may not use more than ten arguments for each command (the command is also counted as an argument).
 - The `cd` command is not supported and may not be used.
 
