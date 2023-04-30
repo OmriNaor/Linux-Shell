@@ -16,13 +16,13 @@ int main()
 
     input_string = (char*) malloc(MAX_CHARACTERS + 2);
     if (input_string == NULL)
-        exit_program("ERR");
+        exit_program("Failed to allocate memory!");
 
     while (enter_counter < ENTER_PRESSED)
     {
         if (getcwd(working_directory, MAX_WORKING_DIRECTORY_CHARACTERS) == NULL)
         {
-            perror("ERR");
+            perror("Failed to get the working directory");
             exit(EXIT_FAILURE);
         }
 
@@ -37,7 +37,7 @@ int main()
             if (input_string[strlen(input_string) - 1] != '\n')
             {
                 while (getchar() != '\n'); // Clear buffer
-                printf("ERR\n");
+                printf("Input may not be more than %d characters\n", MAX_CHARACTERS);
             }
             else
                 break;
@@ -59,11 +59,10 @@ int main()
                 sentence[strcspn(sentence,
                                  "\n")] = '\0'; // strcspn returns the first index of '\n' and then sentence[location] replaces it with a null terminator.
 
-            trimmed_sentence = (char*) malloc(
-                    strlen(sentence) + 1); // Holding the seperated split sentence between the semicolon
+            trimmed_sentence = (char*) malloc(strlen(sentence) + 1); // Holding the seperated split sentence between the semicolon
 
             if (trimmed_sentence == NULL)
-                exit_program("ERR");
+                exit_program("Failed to allocate memory!");
 
             strcpy(trimmed_sentence, sentence);
 
@@ -179,7 +178,7 @@ char* trim_sentence(char c, const char* str)
     if (trimmed_sentence == NULL)
     {
         free_variables_memory();
-        exit_program("ERR");
+        exit_program("Failed to allocate memory!");
     }
 
     int j = 0;
@@ -215,7 +214,7 @@ variable* create_new_variable_node(char* name, char* value)
     variable* new_var = (variable*) malloc(sizeof(variable));
 
     if (!new_var)
-        exit_program("ERR");
+        exit_program("Failed to allocate memory!");
 
     new_var->name = (char*) malloc(strlen(name) + 1);
     new_var->value = (char*) malloc(strlen(value) + 1);
@@ -225,7 +224,7 @@ variable* create_new_variable_node(char* name, char* value)
     {
         free(new_var->name);
         free(new_var->value);
-        exit_program("ERR");
+        exit_program("Failed to allocate memory!");
     }
 
     strcpy(new_var->name, name);
@@ -368,7 +367,7 @@ int handle_echo_command(char* echo_ptr, char** args)
 
     args[1] = malloc(strlen(trimmed_arguments) + 1);
     if (args[1] == NULL)
-        exit_program("ERR");
+        exit_program("Failed to allocate memory!");
 
     strcpy(args[1], trimmed_arguments);
     args[2] = NULL;
@@ -400,7 +399,7 @@ int is_legal_command(char** args, int arguments_count, int echo_arguments_count)
     if ((arguments_count > MAX_ARGUMENTS && (strcmp(args[0], "echo") != 0)) ||
         (echo_arguments_count > MAX_ARGUMENTS && (strcmp(args[0], "echo")) == 0))
     {
-        printf("ERR\n");
+        printf("Command may not have more than %d arguments! (command is also counted as an argument)\n", MAX_ARGUMENTS);
         return 0;
     }
 
@@ -514,7 +513,7 @@ void execute_command(char* command)
         // Open pipe and check if failed
         if (pipe(pipe_fd) == -1)
         {
-            perror("ERR");
+            perror("Failed to open a pipe");
 
             if (echo_ptr != NULL)
                 free(args[1]);
@@ -535,7 +534,7 @@ void execute_command(char* command)
             if (echo_ptr != NULL)
                 free(args[1]);
 
-            perror("ERR");
+            perror("Failed to fork");
             exit(EXIT_FAILURE);
         }
 
@@ -551,7 +550,7 @@ void execute_command(char* command)
                 // If failed to open the file
                 if (file_fd < 0)
                 {
-                    perror("ERR");
+                    perror("Failed to open the file");
                     free(trimmed_command);
                     // Reset the standard input file descriptor to its original value
                     dup2(original_stdin_fd, STDIN_FILENO);
@@ -579,7 +578,7 @@ void execute_command(char* command)
 
             free_variables_memory();
             free(trimmed_command);
-            perror("ERR");
+            perror("Failed to exect");
             exit(EXIT_FAILURE);
         }
         else // Parent process
@@ -771,7 +770,7 @@ char* extract_variable_name(const char* str)
     name = (char*) malloc(var_name_length);
 
     if (!name)
-        exit_program("ERR");
+        exit_program("Failed to allocate memory!");
 
     strncpy(name, pos + 1,
             var_name_length - 1); // Copy the variable name (starting at $+1 and ending after var_name_length)
@@ -804,7 +803,7 @@ void replace_variable(char** str)
     char* replaced_str = realloc(*str, new_size + name_length);
 
     if (replaced_str == NULL)
-        exit_program("ERR");
+        exit_program("Failed to allocate memory!");
 
     unsigned long i = 0;
     // Get the location of the first $ char
@@ -840,7 +839,7 @@ int update_variable(const char* name, const char* value)
             char* new_value = (char*) realloc(temp->value, strlen(value) + 1);
 
             if (new_value == NULL)
-                exit_program("ERR");
+                exit_program("Failed to allocate memory!");
 
 
             // Update variable value and pointer
