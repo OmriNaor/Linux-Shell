@@ -28,7 +28,7 @@ A typical Linux Shell created from scratch. This shell supports many commands su
 
 ## The Algorithm
 
-- The program starts by displaying the shell prompt. The prompt includes the number of legal commands and arguments that have been used so far.
+- The program starts by displaying the shell prompt. The prompt includes the number of successfully executed commands and arguments so far.
 
 - The algorithm checks the given input and handles it accordingly:
 
@@ -38,7 +38,7 @@ A typical Linux Shell created from scratch. This shell supports many commands su
   - Suspend a process
   - Redirect output into a pipe or file
 
-Lastly, the algorithm counts and displays the new number of legal commands and arguments that have been used.
+Lastly, the algorithm counts and displays the new number of successfully executed commands and arguments that have been used.
 
 - The main function uses a while loop and constantly asks the user for their input. To exit the program, the user needs to press enter three times in a row (empty input).
 
