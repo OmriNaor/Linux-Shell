@@ -388,8 +388,8 @@ int is_legal_command(char** args, int arguments_count, int echo_arguments_count)
     if (args[0] == NULL)
         return 0;
 
-    // .cd command is not allowed!
-    if (strcmp(args[0], ".cd") == 0)
+    // cd command is not allowed!
+    if (strcmp(args[0], "cd") == 0)
     {
         printf("cd not supported\n");
         return 0;
