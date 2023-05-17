@@ -113,11 +113,14 @@ int main()
 }
 
 
-/*
- Function counts how many pipes in a given string
- @param str - string to count the pipes
- @return the amount of pipes in the given string
-*/
+/**
+ * Function to count the number of pipe characters ('|') in a given string.
+ *
+ * @param str: The string to count the pipe characters in.
+ *
+ * @return The number of pipe characters in the given string.
+ */
+
 int get_pipes_amount(char* str)
 {
     int count = 0;
@@ -147,14 +150,19 @@ void sigchld_handler(int sig)
     waitpid(-1, NULL, WNOHANG);
 }
 
-/*
- Function to copy the given string from the beginning and until the given char.
- **[NOTICE] The function does not stop if the given char is inside quote marks.**
- **[NOTICE] - Function is using a dynamic memory allocation and user must free the returned variable when done - unless a NULL is returned**
- @param c - required char to stop at
- @param str - string to copy from
- @return the trimmed string.
-*/
+/**
+ * Function to copy the given string from the beginning and until the given character.
+ *
+ * [NOTICE] The function does not stop if the given character is inside quote marks.
+ * [NOTICE] The function allocates memory for the trimmed string, which should be freed by the caller when no longer needed,
+ * unless a NULL is returned.
+ *
+ * @param c: The character to stop at.
+ * @param str: The string to copy from.
+ *
+ * @return The trimmed string, or NULL if an error occurred.
+ */
+
 char* trim_sentence(char c, const char* str)
 {
     if (str == NULL || str[0] == '\0')
@@ -195,7 +203,11 @@ char* trim_sentence(char c, const char* str)
     return NULL;
 }
 
-// Function to call when malloc fails. Easier to maintain in case of changes in the print for example.
+/**
+ * Function to call when `malloc` fails. Provides a centralized location for handling `malloc` failures.
+ * Easier to maintain in case of changes in the error handling, logging, or reporting.
+ */
+
 void exit_program(char* str)
 {
     printf("%s\n", str);
@@ -203,12 +215,15 @@ void exit_program(char* str)
     exit(EXIT_FAILURE);
 }
 
-/*
- Function to create a new variable node
- @param name - variable name
- @param value - variable value
- @return a pointer to the created variable
-*/
+
+/**
+ * Creates a new variable node with the given name and value.
+ *
+ * @param name: The name of the variable.
+ * @param value: The value of the variable.
+ * @return A pointer to the newly created variable node.
+ */
+
 variable* create_new_variable_node(char* name, char* value)
 {
     variable* new_var = (variable*) malloc(sizeof(variable));
@@ -234,9 +249,11 @@ variable* create_new_variable_node(char* name, char* value)
 }
 
 
-/*
- Function to free all the saved variables_list
-*/
+/**
+ * Frees the memory allocated for the saved variables list.
+ * This function should be called to release the memory when the saved variables are no longer needed.
+ */
+
 void free_variables_memory()
 {
     variable* current = variables;
@@ -255,13 +272,16 @@ void free_variables_memory()
 }
 
 
-/*
- Function to count all arguments in a given string
- @param str - string to count the arguments
- @param regular_arguments - a variable to put the amount of counted arguments
- @param inside_quote_arguments - a variable to put the amount of counted inside-quote-marks arguments
- e.g. omri naor "live in jerusalem" - regular_arguments = 5, inside_quote_arguments = 3
-*/
+/**
+ * Counts the number of arguments in a given string.
+ * It separates regular arguments and arguments inside quote marks.
+ *
+ * @param str: The string to count the arguments.
+ * @param regular_arguments: A variable to store the count of regular arguments.
+ * @param inside_quote_arguments: A variable to store the count of arguments inside quote marks.
+ *        e.g., "omri naor "live in jerusalem"" - regular_arguments = 5, inside_quote_arguments = 3.
+ */
+
 void count_arguments(const char* str, int* regular_arguments, int* inside_quote_arguments)
 {
     int sum_arguments = 0; // To hold the total amount of arguments
@@ -310,13 +330,16 @@ void count_arguments(const char* str, int* regular_arguments, int* inside_quote_
 }
 
 
-/*
- Function receives an array and an echo command, parses the command into arguments, puts the arguments inside the array, and checks all its different edge cases.
- **[NOTICE] - Function is using a dynamic memory allocation and user must free args[1] when done.**
- @param echo_ptr - pointer to the echo command and its arguments
- @param args - an array to parse the arguments into
- @return the amount of echo arguments
-*/
+/**
+ * Receives an echo command and parses it into arguments, putting the arguments inside the given array.
+ * It checks for different edge cases and dynamically allocates memory for args[1].
+ * [NOTICE]: The function uses dynamic memory allocation and the user must free args[1] when done.
+ *
+ * @param echo_ptr: Pointer to the echo command and its arguments.
+ * @param args: An array to parse the arguments into.
+ * @return The number of echo arguments.
+ */
+
 int handle_echo_command(char* echo_ptr, char** args)
 {
     char trimmed_arguments[strlen(echo_ptr) + 1];
@@ -375,21 +398,23 @@ int handle_echo_command(char* echo_ptr, char** args)
     return echo_arguments_count;
 }
 
-/*
- Function to check if the given command is legal and may be executed
- @param args - array with a stored command and its arguments
- @param arguments_count - number of arguments for non-echo commands
- @param echo_arguments_count - number of arguments for echo commands
- @return 1 if legal, else return 0
-*/
+/**
+ * Checks if the given command is legal and can be executed.
+ *
+ * @param args: Array with a stored command and its arguments.
+ * @param arguments_count: Number of arguments for non-echo commands.
+ * @param echo_arguments_count: Number of arguments for echo commands.
+ * @return 1 if the command is legal, otherwise returns 0.
+ */
+
 int is_legal_command(char** args, int arguments_count, int echo_arguments_count)
 {
     // Entered space only
     if (args[0] == NULL)
         return 0;
 
-    // cd command is not allowed!
-    if (strcmp(args[0], "cd") == 0)
+    // .cd command is not allowed!
+    if (strcmp(args[0], ".cd") == 0)
     {
         printf("cd not supported\n");
         return 0;
@@ -407,11 +432,12 @@ int is_legal_command(char** args, int arguments_count, int echo_arguments_count)
 }
 
 
-/*
- Function to execute shell commands.
- Stores the amount of used commands and arguments (legal commands only) in the global variables.
- @param command - command to be executed
-*/
+/**
+ * Executes shell commands and stores the number of used commands and arguments (legal commands only) in global variables.
+ *
+ * @param command: The command to be executed.
+ */
+
 void execute_command(char* command)
 {
     if (command == NULL || strcmp(command, " ") == 0 || strcmp(command, "") == 0)
@@ -636,12 +662,15 @@ void execute_command(char* command)
 }
 
 
-/*
- Function to parse command arguments into a given array
- @param command - required command + its arguments to parse into the array
- @param args - array to store the command and the arguments
- @return the amount of arguments
-*/
+/**
+ * Parses command arguments into an array.
+ *
+ * @param command: Required command + its arguments to parse into the array.
+ * @param args: Array to store the command and the arguments.
+ *
+ * @return The number of arguments.
+ */
+
 int parse_arguments(char* command, char* args[])
 {
     int arguments_count = 0;
@@ -670,11 +699,14 @@ int parse_arguments(char* command, char* args[])
 }
 
 
-/*
- Function to store a variable and its value. If the variable already exists, function will update its value to the given one.
- @param details - string in the format of <Variable_Name>=<Variable_Value>
- @return 1 if added, 0 if updated and -1 if failed
-*/
+/**
+ * Stores a variable and its value. If the variable already exists, the function will update its value to the given one.
+ *
+ * @param details: String in the format of "<Variable_Name>=<Variable_Value>".
+ *
+ * @return 1 if the variable was added, 0 if it was updated, and -1 if it failed.
+ */
+
 int add_variable(char* details)
 {
 
@@ -703,11 +735,14 @@ int add_variable(char* details)
     return 1;
 }
 
-/*
- Function to get a given variable's value
- @param name - the variable name
- @return the given variable's value. Space if the variable doesn't exist.
-*/
+/**
+ * Retrieves the value of a specified variable.
+ *
+ * @param name: The name of the variable for which to retrieve the value.
+ *
+ * @return The value of the given variable. Returns a space character if the variable doesn't exist.
+ */
+
 char* get_variable_value(char* name)
 {
     variable* temp = variables;
@@ -722,11 +757,14 @@ char* get_variable_value(char* name)
     return " ";
 }
 
-/*
- Function to remove any leading and trailing spaces from a string
- @param str - string to remove the leading and trailing spaces from
- @return the same given string but without leading and trailing spaces
-*/
+/**
+ * Removes any leading and trailing spaces from the provided string.
+ *
+ * @param str: The string from which leading and trailing spaces should be removed.
+ *
+ * @return The original string but without any leading or trailing spaces.
+ */
+
 char* remove_spaces(char* str)
 {
     if (str == NULL)
@@ -749,12 +787,16 @@ char* remove_spaces(char* str)
     return str;
 }
 
-/*
- ** NOTICE: Function is using malloc and returns the allocated variable. User must free the variable when done (!) **
- Function to extract a variable name (starting with $) from a given string.
- @param str - string that contains a variable to extract
- @return string of the variable name. NULL if error occurred (string doesn't contain a $)
-*/
+/**
+ * Extracts a variable name (indicated by a preceding '$') from a provided string.
+ *
+ * Note: This function allocates memory for the returned string, which should be freed by the caller when it is no longer needed.
+ *
+ * @param str: The string containing the variable to be extracted.
+ *
+ * @return A string representing the extracted variable name. If the string doesn't contain a '$', the function returns NULL.
+ */
+
 char* extract_variable_name(const char* str)
 {
     char* pos = strchr(str, '$'); // find position of $
@@ -779,10 +821,12 @@ char* extract_variable_name(const char* str)
     return name;
 }
 
-/*
- Function to replace a given variable, starting with $, with its respective value
- @param str - string that contains a variable to replace
-*/
+/**
+ * Function that replaces occurrences of a specified variable, indicated by a preceding '$', with its actual value within a given string.
+ *
+ * @param str: The string containing the variable to be replaced.
+ */
+
 void replace_variable(char** str)
 {
     char* name = extract_variable_name(*str);
@@ -821,12 +865,15 @@ void replace_variable(char** str)
     free(name);
 }
 
-/*
- Function updates a saved variable with a new required value
- @param name - name of the variable to update
- @param value - value of the variable to update
- @return 1 if variable found and updated, else return 0
-*/
+/**
+ * Function to update the value of a specified variable.
+ *
+ * @param name: The name of the variable to be updated.
+ * @param value: The new value to be assigned to the variable.
+ *
+ * @return 1 if the variable was successfully found and updated, otherwise 0.
+ */
+
 int update_variable(const char* name, const char* value)
 {
     variable* temp = variables;
@@ -855,11 +902,14 @@ int update_variable(const char* name, const char* value)
     return 0; // Variable not found
 }
 
-/*
- Function checks and counts how many the char "$" appears in the given strings
- @param str - string to check
- @return the amount of "$" in the given string
-*/
+/**
+ * Function to count the occurrences of the character '$' in a given string.
+ *
+ * @param str: The string in which to count occurrences of '$'.
+ *
+ * @return The number of times '$' appears in the provided string.
+ */
+
 int count_dollars(const char* str)
 {
     int count = 0;
